@@ -103,11 +103,11 @@ so syncing only happens in `Sujoymoulick/Ascelstore` and deploying only happens 
 
 ### One-time setup
 
-1. **Create the company repo** (for example `SSTech/Ascelstore`), empty.
+1. **Company repo**: [`ASCEL6251/ascelstore`](https://github.com/ASCEL6251/ascelstore).
 2. **Personal repo** `Sujoymoulick/Ascelstore` → Settings → Secrets and variables → Actions:
-   - Variable `SYNC_TARGET_REPO` = `SSTech/Ascelstore`
-   - Secret `SYNC_TOKEN` = a personal access token that can push to the company repo
-     (fine-grained: Contents and Workflows *Read and write* on that repo; classic: `repo` + `workflow`)
+   - Secret `ASCELSTORE_SYNC_TOKEN` = a personal access token that can push to the company repo
+     (fine-grained: Contents and Workflows *Read and write* on that repo; classic: `repo` + `workflow`).
+     The target defaults to `ASCEL6251/ascelstore`; set a variable `SYNC_TARGET_REPO` only to change it.
 3. **Company repo** → Settings → Secrets and variables → Actions:
    - Secret `CLOUDFLARE_API_TOKEN` = Cloudflare API token with *Cloudflare Pages: Edit*
    - Secret `CLOUDFLARE_ACCOUNT_ID` = your Cloudflare account ID
