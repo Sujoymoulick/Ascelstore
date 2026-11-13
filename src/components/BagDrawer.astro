@@ -1,0 +1,28 @@
+---
+import Icon from './Icon.astro';
+---
+<div class="scrim" id="scrim" data-close-bag></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="bagTitle" aria-hidden="true" inert>
+  <div class="drawer__head">
+    <h2 id="bagTitle">Your bag <span id="bagTitleCount"></span></h2>
+    <button class="icon" type="button" data-close-bag aria-label="Close bag"><Icon name="close" /></button>
+  </div>
+  <div class="ship"><p id="shipMsg"></p><div class="ship__bar"><i id="shipFill"></i></div></div>
+  <div class="drawer__items" id="bagItems" data-lenis-prevent></div>
+  <div class="drawer__foot" id="bagFoot">
+    <form class="coupon" id="couponForm">
+      <label class="sr-only" for="couponIn">Discount code</label>
+      <input id="couponIn" placeholder="Discount code" autocomplete="off" />
+      <button class="btn btn--ghost" type="submit">Apply</button>
+    </form>
+    <p class="form-msg" id="couponMsg" role="status"></p>
+    <div class="totals">
+      <div><span>Subtotal</span><span id="subTotal">₹0</span></div>
+      <div class="totals__disc" id="discRow" hidden><span>Discount</span><span id="discTotal"></span></div>
+      <div><span>Shipping</span><span id="shipTotal">—</span></div>
+      <div class="totals__grand"><span>Total</span><span id="grandTotal">₹0</span></div>
+    </div>
+    <button class="btn btn--block" id="checkoutBtn" type="button">Secure checkout <Icon name="arrow" size={16} /></button>
+    <p class="drawer__note">Taxes included · UPI · Cards · COD</p>
+  </div>
+</aside>

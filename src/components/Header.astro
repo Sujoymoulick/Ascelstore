@@ -1,0 +1,32 @@
+---
+import Icon from './Icon.astro';
+import { HOME } from '../data/home';
+import type { Gender } from '../data/products';
+interface Props { gender: Gender }
+const { gender } = Astro.props;
+const here = Astro.url.pathname + Astro.url.search;
+---
+<header class="header" id="header">
+  <div class="wrap header__row">
+    <nav class="gender" aria-label="Shop for">
+      <a href="/men" data-gender="men" aria-current={gender === 'men' ? 'true' : undefined}>MEN</a>
+      <a href="/women" data-gender="women" aria-current={gender === 'women' ? 'true' : undefined}>WOMEN</a>
+      <a href={`/${gender}/all?sale=1`} class="is-sale">SALE</a>
+      <span class="gender__ind" id="genderInd"></span>
+    </nav>
+    <a href={`/${gender}`} class="logo" aria-label="AscelStore home">Ascel<i></i></a>
+    <div class="tools">
+      <button class="search-pill" type="button" data-open-search><Icon name="search" />Search hoodies, tees…<kbd>/</kbd></button>
+      <button class="icon search-icon" type="button" data-open-search aria-label="Search"><Icon name="search" /></button>
+      <a class="icon hide-sm" href="/wishlist" aria-label="Wishlist"><Icon name="heart" /><span class="count" id="wishCount">0</span></a>
+      <button class="icon" type="button" id="bagBtn" aria-label="Open bag"><Icon name="bag" /><span class="count" id="bagCount">0</span></button>
+    </div>
+  </div>
+  <nav class="subnav" aria-label="Categories">
+    {HOME[gender].nav.map(([label, href]) => <a href={href} aria-current={here === href ? 'page' : undefined}>{label}</a>)}
+  </nav>
+</header>
+<style>
+  .search-icon { display: none; }
+  @media (max-width: 900px) { .search-icon { display: grid; } }
+</style>

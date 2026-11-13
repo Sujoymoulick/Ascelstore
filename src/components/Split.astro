@@ -1,0 +1,20 @@
+---
+import Icon from './Icon.astro';
+import { img, srcset } from '../lib/img';
+import type { HomeContent } from '../data/home';
+interface Props { items: HomeContent['split'] }
+const { items } = Astro.props;
+---
+<section class="section">
+  <div class="wrap head">
+    <div data-reveal><p class="eyebrow">Most loved</p><h2>Best<em class="serif">sellers</em></h2></div>
+  </div>
+  <div class="wrap split">
+    {items.map((s, i) => (
+      <a href={s.href} data-reveal style={`--d:${i * .1}s`}>
+        <img src={img(s.img, 1000, 1050)} srcset={srcset(s.img, [600, 1000, 1400], 1.05)} sizes="(max-width: 600px) 100vw, 50vw" alt="" loading="lazy" decoding="async" />
+        <div class="split__t"><p class="eyebrow">{s.sub}</p><h3>{s.title}</h3><span class="btn btn--light">Shop now <Icon name="arrow" size={16} /></span></div>
+      </a>
+    ))}
+  </div>
+</section>

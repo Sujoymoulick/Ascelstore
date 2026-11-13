@@ -1,0 +1,29 @@
+---
+import Hero from './Hero.astro';
+import Trust from './Trust.astro';
+import ProductRail from './ProductRail.astro';
+import CategoryTiles from './CategoryTiles.astro';
+import Editorial from './Editorial.astro';
+import Split from './Split.astro';
+import Stats from './Stats.astro';
+import About from './About.astro';
+import Join from './Join.astro';
+import { HOME } from '../data/home';
+import { forGender, type Gender } from '../data/products';
+interface Props { gender: Gender }
+const { gender } = Astro.props;
+const h = HOME[gender];
+const all = forGender(gender);
+const fresh = all.filter((p) => p.isNew).slice(0, 10);
+const hot = all.filter((p) => p.hot).slice(0, 10);
+---
+<Hero slides={h.hero} />
+<Trust />
+<ProductRail id="new" eyebrow="Just landed" title="New " accent="in" products={fresh} href={`/${gender}/all?new=1`} />
+<CategoryTiles gender={gender} />
+<Editorial edit={h.edit} />
+<Split items={h.split} />
+<ProductRail eyebrow="Trending now" title="Most " accent="wanted" products={hot} href={`/${gender}/all`} />
+<Stats />
+<About photo={h.about} gender={gender} />
+<Join />

@@ -1,0 +1,18 @@
+---
+import Icon from './Icon.astro';
+---
+<div class="search" id="search" role="dialog" aria-modal="true" aria-label="Search products" hidden>
+  <div class="search__scrim" data-close-search></div>
+  <div class="search__box" data-lenis-prevent>
+    <div class="search__row">
+      <Icon name="search" />
+      <label class="sr-only" for="searchIn">Search products</label>
+      <input id="searchIn" placeholder="What are you looking for?" autocomplete="off" />
+      <button class="icon" type="button" data-close-search aria-label="Close search"><Icon name="close" /></button>
+    </div>
+    <div class="search__hint">Popular:
+      {['Hoodies', 'Oversized', 'Jeans', 'Coats', 'Sneakers'].map((t) => <button class="chip" type="button" data-q={t}>{t}</button>)}
+    </div>
+    <div class="search__results" id="searchResults"></div>
+  </div>
+</div>

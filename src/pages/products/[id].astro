@@ -1,0 +1,107 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import ProductRail from '../../components/ProductRail.astro';
+import Trust from '../../components/Trust.astro';
+import { STORE, money, offPct, sectionLabel, genderLabel, type Product } from '../../data/products';
+import { img, srcset } from '../../lib/img';
+import { heartSVG } from '../../lib/card';
+
+export function getStaticPaths() {
+  return STORE.products.map((p) => ({ params: { id: p.id }, props: { p } }));
+}
+interface Props { p: Product }
+const { p } = Astro.props;
+const sizes = p.section === 'accessories' ? ['One size'] : STORE.sizes;
+const related = STORE.products.filter((x) => x.id !== p.id && x.gender === p.gender && x.section === p.section)
+  .concat(STORE.products.filter((x) => x.id !== p.id && x.gender === p.gender && x.section !== p.section && x.hot))
+  .slice(0, 10);
+const off = offPct(p);
+const url = new URL(`/products/${p.id}`, Astro.site).toString();
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: p.name,
+  description: p.desc,
+  sku: p.id,
+  image: p.images.map((k) => img(k, 1200, 1500)),
+  brand: { '@type': 'Brand', name: 'AscelStore' },
+  category: `${genderLabel(p.gender)} > ${sectionLabel(p.section)} > ${p.type}`,
+  url,
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: p.rating, reviewCount: p.reviews },
+  offers: {
+    '@type': 'Offer', url, priceCurrency: STORE.currency, price: p.price,
+    availability: 'https://schema.org/InStock', itemCondition: 'https://schema.org/NewCondition',
+  },
+};
+---
+<Base gender={p.gender} jsonLd={jsonLd} image={img(p.images[0], 1200, 630)} preload={img(p.images[0], 900, 1125)}
+  title={`${p.name} — ${money(p.price)} | AscelStore`}
+  description={`${p.desc} ${p.fit} Free shipping over ${money(STORE.freeShipAt)}, 30-day easy returns.`}>
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href={`/${p.gender}`}>{genderLabel(p.gender)}</a><span aria-hidden="true">/</span>
+      <a href={`/${p.gender}/${p.section}`}>{sectionLabel(p.section)}</a><span aria-hidden="true">/</span>
+      <a href={`/${p.gender}/${p.section}?type=${encodeURIComponent(p.type)}`}>{p.type}</a>
+    </nav>
+    <div class="pdp" data-pdp={p.id}>
+      <div class="gallery" data-gallery>
+        {p.images.map((k, i) => (
+          <figure data-reveal style={`--d:${i * .08}s`}>
+            <img src={img(k, 900, 1125)} srcset={srcset(k, [500, 900, 1300], 1.25)} sizes="(max-width: 900px) 82vw, 33vw"
+              alt={i ? `${p.name}, view ${i + 1}` : p.name} loading={i ? 'lazy' : 'eager'} fetchpriority={i ? undefined : 'high'} decoding="async" width="900" height="1125" />
+          </figure>
+        ))}
+      </div>
+      <div class="buy">
+        {p.badge && <span class:list={['badge', { 'badge--red': /stock|seller/i.test(p.badge) }]}>{p.badge}</span>}
+        <h1>{p.name}</h1>
+        <p class="buy__type">{p.type} · {genderLabel(p.gender)}</p>
+        <a class="buy__rating" href="#details"><Icon name="star" size={14} /> {p.rating} <span>· {p.reviews} reviews</span></a>
+        <div class="buy__price">{money(p.price)}{p.compare && <><s>{money(p.compare)}</s><em>{off}% off</em></>}</div>
+        <p class="buy__tax">Inclusive of all taxes</p>
+
+        <div class="buy__label"><span id="sizeLabel">Select size</span>{sizes.length > 1 && <button type="button" data-size-guide>Size guide</button>}</div>
+        <div class="sizes" role="radiogroup" aria-labelledby="sizeLabel" data-sizes>
+          {sizes.map((s) => <button type="button" role="radio" aria-checked={sizes.length === 1 ? 'true' : 'false'} data-size={s}>{s}</button>)}
+        </div>
+        <p class="buy__msg" data-size-msg role="status"></p>
+        {p.stock && p.stock <= 6 && <p class="buy__stock">Only {p.stock} left in stock</p>}
+        <div class="buy__actions">
+          <button class="btn" type="button" data-pdp-add>Add to bag <Icon name="bag" size={16} /></button>
+          <button class="buy__wish" type="button" data-wish={p.id} aria-pressed="false" aria-label={`Save ${p.name}`} set:html={heartSVG} />
+        </div>
+        <div class="perks">
+          <div>Free shipping<small>over ₹2,999</small></div>
+          <div>30-day returns<small>free pickup</small></div>
+          <div>COD available<small>pay on delivery</small></div>
+        </div>
+        <div class="acc" id="details">
+          <details open><summary>Product details</summary><div class="acc__body"><p>{p.desc}</p></div></details>
+          <details><summary>Size &amp; fit</summary><div class="acc__body"><p>{p.fit}</p></div></details>
+          <details><summary>Fabric &amp; care</summary><div class="acc__body"><p>{p.fabric}</p></div></details>
+          <details><summary>Shipping &amp; returns</summary><div class="acc__body"><p>Ships in 24 hours. Free delivery over ₹2,999, otherwise ₹99. Free returns and exchanges within 30 days.</p></div></details>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ProductRail eyebrow="You may also like" title="Complete the " accent="fit" products={related} />
+  <Trust />
+  <div style="height:40px"></div>
+
+  <div class="sticky-atc" data-sticky-atc>
+    <b>{p.name} · {money(p.price)}</b>
+    <button class="btn btn--light" type="button">Add to bag</button>
+  </div>
+
+  <dialog class="sheet" data-guide aria-labelledby="guideTitle">
+    <h3 id="guideTitle">Size guide</h3>
+    <table>
+      <thead><tr><th>Size</th><th>Chest (in)</th><th>Length (in)</th><th>Shoulder (in)</th></tr></thead>
+      <tbody>
+        {[['XS', 36, 26, 17], ['S', 38, 27, 17.5], ['M', 40, 28, 18], ['L', 42, 29, 18.5], ['XL', 44, 30, 19], ['XXL', 46, 31, 19.5]].map((r) => <tr>{r.map((c) => <td>{c}</td>)}</tr>)}
+      </tbody>
+    </table>
+    <form method="dialog"><button class="btn">Close</button></form>
+  </dialog>
+</Base>

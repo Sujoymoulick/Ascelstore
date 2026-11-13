@@ -1,0 +1,29 @@
+---
+import Icon from './Icon.astro';
+import { img, srcset } from '../lib/img';
+import { HOME, tileHref } from '../data/home';
+import { SECTIONS, forGender, type Gender } from '../data/products';
+interface Props { gender: Gender }
+const { gender } = Astro.props;
+const tiles = HOME[gender].tiles;
+const types = [...new Set(forGender(gender).map((p) => p.type))];
+---
+<section class="section section--flush" id="categories">
+  <div class="wrap">
+    <div class="head"><div data-reveal><p class="eyebrow">Shop by category</p><h2>Find your <em class="serif">fit</em></h2></div><a href={`/${gender}/all`} class="link" data-reveal>Shop all</a></div>
+    <div class="tabs" role="tablist" aria-label="Categories" data-tabs>
+      {SECTIONS.map((s, i) => <button type="button" role="tab" id={`tab-${s.id}`} aria-controls={`panel-${s.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i ? -1 : 0}>{s.label}</button>)}
+      <span class="tabs__ind" data-tabs-ind></span>
+    </div>
+    {SECTIONS.map((s, i) => (
+      <div class="tiles" role="tabpanel" id={`panel-${s.id}`} aria-labelledby={`tab-${s.id}`} hidden={i > 0}>
+        {tiles[s.id].map(([label, key]) => (
+          <a href={tileHref(gender, s.id, label, types)} class="tile">
+            <img src={img(key, 600, 800)} srcset={srcset(key, [400, 600, 800], 4 / 3)} sizes="(max-width: 900px) 50vw, 25vw" alt="" loading="lazy" decoding="async" />
+            <span>{label}<small>Shop <Icon name="arrow" /></small></span>
+          </a>
+        ))}
+      </div>
+    ))}
+  </div>
+</section>

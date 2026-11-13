@@ -1,0 +1,101 @@
+---
+import '../styles/global.css';
+import Announce from '../components/Announce.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import BagDrawer from '../components/BagDrawer.astro';
+import Search from '../components/Search.astro';
+import type { Gender } from '../data/products';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  jsonLd?: object;
+  gender?: Gender;
+  canonical?: string;
+  preload?: string;
+}
+const {
+  title = 'AscelStore — Elevated Everyday Wear for Men & Women',
+  description = 'Heavyweight tees, hoodies, knits, denim and outerwear for men and women. Free shipping over ₹2,999 and 30-day easy returns.',
+  image = '/og.svg',
+  jsonLd,
+  gender = 'men',
+  canonical = Astro.url.pathname,
+  preload,
+} = Astro.props;
+const canonicalUrl = new URL(canonical, Astro.site);
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta name="theme-color" content="#f6f3ee" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="AscelStore" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={new URL(image, Astro.site)} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    {preload && <link rel="preload" as="image" href={preload} fetchpriority="high" />}
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    <script is:inline>document.documentElement.classList.replace('no-js', 'js');</script>
+  </head>
+  <body>
+    <div class="loader" id="loader" aria-hidden="true">
+      <div class="loader__word">{[...'Ascel'].map((c, i) => <span style={`animation-delay:${i * 60}ms`}>{c}</span>)}</div>
+      <div class="loader__bar"></div>
+    </div>
+    <script is:inline>
+      // Intro plays once per visit; skipped for reduced motion.
+      (function () {
+        var l = document.getElementById('loader');
+        try {
+          if (sessionStorage.getItem('ascel:seen') || matchMedia('(prefers-reduced-motion: reduce)').matches) l.remove();
+          else sessionStorage.setItem('ascel:seen', '1');
+        } catch (e) { l.remove(); }
+      })();
+    </script>
+
+    <div class="curtain" id="curtain" aria-hidden="true"><h2><span id="curtainWord"></span></h2></div>
+    <script is:inline>
+      // Finish a Men/Women switch started on the previous page: start covered, then lift.
+      (function () {
+        try {
+          var w = sessionStorage.getItem('ascel:curtain');
+          if (!w) return;
+          sessionStorage.removeItem('ascel:curtain');
+          document.getElementById('curtainWord').textContent = w;
+          document.getElementById('curtain').className = 'curtain is-cover';
+        } catch (e) {}
+      })();
+    </script>
+
+    <a class="skip" href="#main">Skip to content</a>
+    <Announce />
+    <Header gender={gender} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <BagDrawer />
+    <Search />
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>

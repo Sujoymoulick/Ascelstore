@@ -1,0 +1,27 @@
+---
+import Icon from './Icon.astro';
+import { img, srcset } from '../lib/img';
+import type { Slide } from '../data/home';
+interface Props { slides: Slide[] }
+const { slides } = Astro.props;
+---
+<section class="hero" id="hero" aria-roledescription="carousel" aria-label="Featured collections">
+  {slides.map((s, i) => (
+    <div class:list={['slide', { 'is-on': i === 0 }]} role="group" aria-roledescription="slide" aria-label={`${i + 1} of ${slides.length}`} aria-hidden={i ? 'true' : undefined}>
+      <img src={img(s.img, 1800)} srcset={srcset(s.img, [800, 1200, 1800, 2400])} sizes="100vw" alt=""
+        loading={i ? 'lazy' : 'eager'} fetchpriority={i ? undefined : 'high'} decoding="async" />
+      <div class="slide__copy">
+        <p class="eyebrow">{s.eyebrow}</p>
+        {i === 0
+          ? <h1><span class="ln"><span>{s.l1}</span></span><span class="ln"><span><em class="serif">{s.l2}</em></span></span></h1>
+          : <h2><span class="ln"><span>{s.l1}</span></span><span class="ln"><span><em class="serif">{s.l2}</em></span></span></h2>}
+        <p>{s.text}</p>
+        <a href={s.href} class="btn btn--light" tabindex={i ? -1 : undefined}>{s.cta} <Icon name="arrow" size={16} /></a>
+      </div>
+    </div>
+  ))}
+  <span class="hero__num" id="heroNum" aria-hidden="true">01 / 0{slides.length}</span>
+  <div class="hero__dots">
+    {slides.map((_, i) => <button type="button" class:list={{ 'is-on': i === 0 }} aria-label={`Show slide ${i + 1}`}><i></i></button>)}
+  </div>
+</section>

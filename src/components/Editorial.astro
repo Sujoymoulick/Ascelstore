@@ -1,0 +1,15 @@
+---
+import Icon from './Icon.astro';
+import { img, srcset } from '../lib/img';
+import type { HomeContent } from '../data/home';
+interface Props { edit: HomeContent['edit'] }
+const { edit } = Astro.props;
+---
+<a class="edit" href={edit.href} data-clip>
+  <img src={img(edit.img, 2000, 1400)} srcset={srcset(edit.img, [900, 1400, 2000], .7)} sizes="100vw" alt="" loading="lazy" decoding="async" data-parallax=".18" />
+  <div class="edit__copy">
+    <p class="eyebrow" data-reveal>{edit.eyebrow}</p>
+    <h2 data-reveal style="--d:.1s">{edit.l1}<em class="serif">{edit.l2}</em></h2>
+    <span class="btn btn--light" data-reveal style="--d:.2s">{edit.cta} <Icon name="arrow" size={16} /></span>
+  </div>
+</a>

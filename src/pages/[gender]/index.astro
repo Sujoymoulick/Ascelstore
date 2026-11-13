@@ -1,0 +1,18 @@
+---
+import Base from '../../layouts/Base.astro';
+import Home from '../../components/Home.astro';
+import { HOME } from '../../data/home';
+import { img } from '../../lib/img';
+import type { Gender } from '../../data/products';
+
+export function getStaticPaths() {
+  return [{ params: { gender: 'men' } }, { params: { gender: 'women' } }];
+}
+const gender = Astro.params.gender as Gender;
+const label = gender === 'men' ? 'Men' : 'Women';
+---
+<Base gender={gender} preload={img(HOME[gender].hero[0].img, 1800)}
+  title={`${label}’s Clothing — Tees, Hoodies, Jeans & Jackets | AscelStore`}
+  description={`Shop ${label.toLowerCase()}’s tees, hoodies, knits, denim and outerwear at AscelStore. Free shipping over ₹2,999 and 30-day easy returns.`}>
+  <Home gender={gender} />
+</Base>

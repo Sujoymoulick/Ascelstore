@@ -1,0 +1,50 @@
+# Builds the site and deploys it to Cloudflare Pages on every push to `main`.
+# Runs only in the company repo (the mirror), never in the personal repo.
+#
+# Setup in the company repo → Settings → Secrets and variables → Actions:
+#   Secret    CLOUDFLARE_API_TOKEN   token with "Cloudflare Pages: Edit" permission
+#   Secret    CLOUDFLARE_ACCOUNT_ID  your Cloudflare account ID
+#   Variable  CF_PAGES_PROJECT       Pages project name (optional, defaults to "ascelstore")
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: github.repository != 'Sujoymoulick/Ascelstore'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Create Pages project if missing
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PROJECT: ${{ vars.CF_PAGES_PROJECT || 'ascelstore' }}
+        run: npx --yes wrangler@3 pages project create "$PROJECT" --production-branch=main || true
+
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=${{ vars.CF_PAGES_PROJECT || 'ascelstore' }} --branch=main --commit-dirty=true
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

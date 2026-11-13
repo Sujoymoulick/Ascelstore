@@ -1,0 +1,25 @@
+---
+import { STORE } from '../data/products';
+const r = STORE.reviews;
+---
+<section class="section section--flush" aria-label="Customer reviews">
+  <div class="wrap">
+    <div class="stats">
+      <h2 data-reveal>Worn by people who<br /><em class="serif">care how it feels.</em></h2>
+      <div class="stat" data-reveal style="--d:.05s"><b data-count="200000" data-suffix="+">2,00,000+</b><span>Happy customers</span></div>
+      <div class="stat" data-reveal style="--d:.1s"><b data-count="4.8" data-dec="1">4.8</b><span>Average rating</span></div>
+      <div class="stat" data-reveal style="--d:.15s"><b data-count="480" data-suffix=" GSM">480 GSM</b><span>Heaviest fleece</span></div>
+    </div>
+  </div>
+  <div class="marquee">
+    <div class="marquee__track">
+      {[...r, ...r].map((x, i) => (
+        <article class="review" aria-hidden={i >= r.length ? 'true' : undefined}>
+          <div class="stars" aria-label={`${x.stars} out of 5 stars`}>{'★'.repeat(x.stars)}</div>
+          <p>“{x.text}”</p>
+          <footer><b>{x.name}</b> · {x.city} · {x.product}</footer>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

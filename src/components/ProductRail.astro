@@ -1,0 +1,20 @@
+---
+import Icon from './Icon.astro';
+import Card from './Card.astro';
+import type { Product } from '../data/products';
+interface Props { eyebrow: string; title: string; accent: string; products: Product[]; href?: string; id?: string }
+const { eyebrow, title, accent, products, href, id } = Astro.props;
+---
+<section class="section" id={id}>
+  <div class="wrap head">
+    <div data-reveal><p class="eyebrow">{eyebrow}</p><h2>{title}<em class="serif">{accent}</em></h2></div>
+    <div style="display:flex;gap:18px;align-items:center">
+      {href && <a href={href} class="link" data-reveal>View all</a>}
+      <div class="arrows"><button type="button" data-rail-dir="-1" aria-label="Scroll left"><Icon name="left" /></button><button type="button" data-rail-dir="1" aria-label="Scroll right"><Icon name="right" /></button></div>
+    </div>
+  </div>
+  <div class="rail" data-rail data-reveal>
+    {products.map((p) => <Card p={p} />)}
+  </div>
+  <div class="wrap"><div class="progress" aria-hidden="true"><i data-rail-bar></i></div></div>
+</section>

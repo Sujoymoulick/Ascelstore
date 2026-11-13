@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import Home from '../components/Home.astro';
+import { HOME } from '../data/home';
+import { img } from '../lib/img';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'OnlineStore',
+  name: 'AscelStore',
+  url: Astro.site?.toString(),
+  description: 'Elevated everyday wear for men and women: tees, hoodies, knits, denim and outerwear.',
+  parentOrganization: { '@type': 'Organization', name: 'SSText', url: 'https://ascelstack.com', sameAs: ['https://cafe.ascelstack.com'] },
+};
+---
+<Base gender="men" canonical="/men" jsonLd={jsonLd} preload={img(HOME.men.hero[0].img, 1800)}>
+  <Home gender="men" />
+</Base>

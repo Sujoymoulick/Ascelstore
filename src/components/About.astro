@@ -1,0 +1,19 @@
+---
+import Icon from './Icon.astro';
+import { img } from '../lib/img';
+import type { PhotoKey } from '../lib/img';
+interface Props { photo: PhotoKey; gender: string }
+const { photo, gender } = Astro.props;
+---
+<section class="section section--flush">
+  <div class="wrap about">
+    <div class="about__pic" data-clip><img src={img(photo, 900, 1300)} alt="Inside the AscelStore studio" loading="lazy" decoding="async" data-parallax=".12" /></div>
+    <div data-reveal>
+      <p class="eyebrow">Who we are</p>
+      <h2>Made slower.<br /><em class="serif">Worn longer.</em></h2>
+      <p>AscelStore started with one heavyweight hoodie and a simple rule: build clothes that still look right after a hundred washes.</p>
+      <p>Every piece is cut in small runs from organic cotton and recycled fibres, and priced fairly. No endless drops, no filler.</p>
+      <a href={`/${gender}/all`} class="btn" style="margin-top:12px">Shop the collection <Icon name="arrow" size={16} /></a>
+    </div>
+  </div>
+</section>

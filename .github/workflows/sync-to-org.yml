@@ -1,0 +1,52 @@
+# Mirrors every push to `main` in the personal repo (Sujoymoulick/Ascelstore)
+# to the company repo. The company repo then deploys itself (see deploy.yml).
+#
+# Setup in Sujoymoulick/Ascelstore → Settings → Secrets and variables → Actions:
+#   Variable  SYNC_TARGET_REPO  e.g. "SSTech/Ascelstore"  (owner/name of the company repo)
+#   Secret    SYNC_TOKEN        a PAT that can push to that repo:
+#                                 fine-grained: Contents = Read and write, Workflows = Read and write
+#                                 classic: scopes "repo" and "workflow"
+name: Sync to company repo
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: sync-to-org
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    # Only the personal repo mirrors. The copy of this file inside the company repo does nothing.
+    if: github.repository == 'Sujoymoulick/Ascelstore'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check configuration
+        id: cfg
+        env:
+          TARGET: ${{ vars.SYNC_TARGET_REPO }}
+          TOKEN: ${{ secrets.SYNC_TOKEN }}
+        run: |
+          if [ -z "$TARGET" ] || [ -z "$TOKEN" ]; then
+            echo "::warning::SYNC_TARGET_REPO variable or SYNC_TOKEN secret is not set. Skipping sync."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.cfg.outputs.ready == 'true'
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Push main to company repo
+        if: steps.cfg.outputs.ready == 'true'
+        env:
+          TARGET: ${{ vars.SYNC_TARGET_REPO }}
+          TOKEN: ${{ secrets.SYNC_TOKEN }}
+        run: |
+          git push --force "https://x-access-token:${TOKEN}@github.com/${TARGET}.git" HEAD:refs/heads/main
+          echo "Synced ${GITHUB_SHA::7} to ${TARGET}@main" >> "$GITHUB_STEP_SUMMARY"

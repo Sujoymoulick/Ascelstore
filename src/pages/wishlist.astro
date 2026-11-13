@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Your Wishlist | AscelStore" description="Pieces you saved at AscelStore.">
+  <div class="wrap">
+    <div class="list-head"><div data-reveal><h1>Your <em class="serif">wishlist</em></h1></div><p id="wishInfo"></p></div>
+    <div class="grid" id="wishGrid"></div>
+    <div class="empty" id="wishEmpty" hidden>
+      <h2>Nothing saved yet</h2>
+      <p>Tap the heart on any piece to keep it here.</p>
+      <a class="btn" href="/men">Shop men</a> <a class="btn btn--ghost" href="/women">Shop women</a>
+    </div>
+  </div>
+  <div style="height:80px"></div>
+</Base>

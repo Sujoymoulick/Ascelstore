@@ -1,0 +1,7 @@
+---
+const offers = ['Free shipping over ₹2,999', '10% off your first order: ASCEL10', '30-day easy returns', 'New winter drop is live', 'COD and UPI accepted'];
+const items = [...offers, ...offers, ...offers];
+---
+<div class="announce" aria-label="Offers">
+  <div class="announce__track">{[...items, ...items].map((t, i) => <span aria-hidden={i >= items.length ? 'true' : undefined}>{t}</span>)}</div>
+</div>

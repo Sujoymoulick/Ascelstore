@@ -1,0 +1,33 @@
+---
+const year = new Date().getFullYear();
+const stack = ['Astro', 'TypeScript', 'Lenis', 'Cloudflare Pages', 'GitHub Actions'];
+---
+<footer class="footer wrap">
+  <div class="footer__grid">
+    <div><a href="/" class="logo" style="font-size:38px">Ascel<i></i></a><p>Elevated everyday wear. Designed in India, built to last a hundred washes.</p></div>
+    <div><h4>Shop</h4><a href="/men">Men</a><a href="/women">Women</a><a href="/men/all?new=1">New in</a><a href="/men/all?sale=1">Sale</a></div>
+    <div><h4>Help</h4><a href="mailto:hello@ascelstore.com">Track order</a><a href="mailto:hello@ascelstore.com">Returns &amp; exchanges</a><a href="/wishlist">Wishlist</a><a href="mailto:hello@ascelstore.com">Contact us</a></div>
+    <div><h4>Follow</h4><a href="https://instagram.com" rel="noopener">Instagram</a><a href="https://youtube.com" rel="noopener">YouTube</a><a href="https://pinterest.com" rel="noopener">Pinterest</a></div>
+  </div>
+  <div class="footer__big" data-big aria-hidden="true"><span>AscelStore</span></div>
+  <div class="footer__legal">
+    <span>© {year} AscelStore by SSText. All rights reserved.</span>
+    <span class="footer__credit">Designed &amp; developed by <a href="https://ascelstack.com" target="_blank" rel="noopener">SSText · AscelStack</a> · <a href="https://cafe.ascelstack.com" target="_blank" rel="noopener">AscelStack Cafe</a></span>
+    <span>UPI · Visa · Mastercard · RuPay · COD</span>
+  </div>
+  <aside class="stack-demo" aria-label="About this demo" data-reveal>
+    <div class="stack-demo__head">
+      <span class="stack-demo__dot" aria-hidden="true"></span>
+      <b>Stack demo</b>
+      <span class="stack-demo__tag">Live</span>
+    </div>
+    <p>AscelStore is a live demo storefront built by <a href="https://ascelstack.com" target="_blank" rel="noopener">AscelStack</a>, an SSText product.</p>
+    <ul class="stack-demo__chips" aria-label="Built with">
+      {stack.map((t) => <li>{t}</li>)}
+    </ul>
+    <div class="stack-demo__links">
+      <a href="https://ascelstack.com" target="_blank" rel="noopener">Explore AscelStack →</a>
+      <a href="https://cafe.ascelstack.com" target="_blank" rel="noopener">Visit the Cafe →</a>
+    </div>
+  </aside>
+</footer>

@@ -1,0 +1,53 @@
+---
+import Base from '../../layouts/Base.astro';
+import Card from '../../components/Card.astro';
+import { SECTIONS, forGender, genderLabel, type Gender, type Section } from '../../data/products';
+
+const ALL = 'all';
+export function getStaticPaths() {
+  return (['men', 'women'] as const).flatMap((gender) =>
+    ['all', ...SECTIONS.map((s) => s.id)].map((section) => ({ params: { gender, section } })));
+}
+const gender = Astro.params.gender as Gender;
+const section = Astro.params.section as Section | typeof ALL;
+const products = forGender(gender).filter((p) => section === ALL || p.section === section);
+const types = [...new Set(products.map((p) => p.type))];
+const g = genderLabel(gender);
+const secLabel = section === ALL ? 'All clothing' : SECTIONS.find((s) => s.id === section)!.label;
+const title = `${g}’s ${secLabel}`;
+---
+<Base gender={gender} title={`${title} — Shop Online | AscelStore`}
+  description={`Shop ${g.toLowerCase()}’s ${secLabel.toLowerCase()} at AscelStore: ${types.slice(0, 4).join(', ').toLowerCase()} and more. Free shipping over ₹2,999.`}>
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href={`/${gender}`}>{g}</a><span aria-hidden="true">/</span><span>{secLabel}</span></nav>
+    <div class="list-head">
+      <div data-reveal><h1>{g}’s <em class="serif">{secLabel.toLowerCase()}</em></h1></div>
+      <p id="listCount" aria-live="polite">{products.length} styles</p>
+    </div>
+    <div class="tabs" data-tabs-static>
+      <a href={`/${gender}/all`} aria-current={section === ALL ? 'page' : undefined}>All</a>
+      {SECTIONS.map((s) => <a href={`/${gender}/${s.id}`} aria-current={section === s.id ? 'page' : undefined}>{s.label}</a>)}
+      <span class="tabs__ind" data-tabs-ind></span>
+    </div>
+    <div class="toolbar">
+      <div class="chips" role="group" aria-label="Filter by type" id="chips">
+        <button class="chip" type="button" data-type="" aria-pressed="true">All</button>
+        {types.map((t) => <button class="chip" type="button" data-type={t} aria-pressed="false">{t}</button>)}
+      </div>
+      <label class="sort">Sort by
+        <select id="sortSel">
+          <option value="featured">Featured</option>
+          <option value="new">Newest</option>
+          <option value="low">Price: low to high</option>
+          <option value="high">Price: high to low</option>
+          <option value="rating">Top rated</option>
+        </select>
+      </label>
+    </div>
+    <div class="grid" id="grid">
+      {products.map((p, i) => <Card p={p} eager={i < 4} sizes="(max-width: 900px) 50vw, (max-width: 1100px) 33vw, 25vw" />)}
+      <div class="empty" id="gridEmpty" hidden><h2>Nothing here yet</h2><p>Try another filter.</p></div>
+    </div>
+  </div>
+  <div style="height:80px"></div>
+</Base>
